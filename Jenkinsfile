@@ -34,7 +34,7 @@ pipeline {
             steps {
                 echo 'Building React frontend...'
 
-                dir('easystore-ui') {
+                dir('eazystore-ui') {
                     sh '''
                         if [ -f "package-lock.json" ]; then
                             npm ci
