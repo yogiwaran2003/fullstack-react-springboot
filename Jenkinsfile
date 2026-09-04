@@ -29,6 +29,17 @@ pipeline {
                 }
             }
         }
+        stage('Build Backend Docker Image') {
+            steps {
+                echo 'Building backend Docker image...'
+        
+                sh '''
+                    docker build \
+                        -t easystore-backend:${BUILD_NUMBER} \
+                        ./stickers
+                '''
+            }
+        }
 
         stage('Build Frontend') {
             steps {
