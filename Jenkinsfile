@@ -126,6 +126,23 @@ pipeline {
             }
         }
 
+        stage('Verify Deployment') {
+            steps {
+                echo 'Verifying deployed containers...'
+        
+                sh '''
+                    echo "===== Running Containers ====="
+                    docker ps
+        
+                    echo "===== Backend ====="
+                    docker logs --tail 30 easystore-backend
+        
+                    echo "===== Frontend ====="
+                    docker logs --tail 30 easystore-frontend
+                '''
+            }
+        }
+
         stage('Build Successful') {
             steps {
                 echo '========================================='
