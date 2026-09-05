@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS address
     postal_code   VARCHAR(20)  NOT NULL,
     country       VARCHAR(100) NOT NULL,
     created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    created_by    VARCHAR(20)  NOT NULL,
+    created_by    VARCHAR(100)  NOT NULL,
     updated_at    TIMESTAMP    DEFAULT NULL,
-    updated_by    VARCHAR(20)  DEFAULT NULL,
+    updated_by    VARCHAR(100)  DEFAULT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE
 );
 
