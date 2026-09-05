@@ -32,21 +32,42 @@ import java.util.List;
 public class EazyStoreSecurityConfig {
     private final List<String> publicPaths;
     @Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrfConfig -> csrfConfig.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
-                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth ->{
-                            publicPaths.forEach(path->auth.requestMatchers(path).permitAll());
-                            auth.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
-                            auth.anyRequest().hasAnyRole("USER", "ADMIN");
-                        } // everything else secured
-
+        return http
+                .csrf(csrfConfig -> csrfConfig
+                        .csrfTokenRepository(
+                                CookieCsrfTokenRepository.withHttpOnlyFalse()
+                        )
+                        .csrfTokenRequestHandler(
+                                new CsrfTokenRequestAttributeHandler()
+                        )
+                        .ignoringRequestMatchers("/h2-console/**")
                 )
-                .addFilterBefore(new JWTTokenValidatorFilter(publicPaths), BasicAuthenticationFilter.class)
+                .cors(corsConfig ->
+                        corsConfig.configurationSource(corsConfigurationSource())
+                )
+                .authorizeHttpRequests(auth -> {
+                    publicPaths.forEach(path ->
+                            auth.requestMatchers(path).permitAll()
+                    );
+    
+                    auth.requestMatchers("/h2-console/**").permitAll();
+                    auth.requestMatchers("/api/v1/admin/**").hasRole("ADMIN");
+                    auth.anyRequest().hasAnyRole("USER", "ADMIN");
+                })
+                .headers(headers ->
+                        headers.frameOptions(frameOptions ->
+                                frameOptions.sameOrigin()
+                        )
+                )
+                .addFilterBefore(
+                        new JWTTokenValidatorFilter(publicPaths),
+                        BasicAuthenticationFilter.class
+                )
                 .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults()).build();
-        // .csrf(csrf -> csrf.disable()) // Only if you need it for APIs without CSRF tokens
+                .httpBasic(Customizer.withDefaults())
+                .build();
     }
 //    @Bean
 //    public UserDetailsService userDetailsService(){
@@ -77,7 +98,7 @@ public class EazyStoreSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config= new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173/"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowCredentials(true);
