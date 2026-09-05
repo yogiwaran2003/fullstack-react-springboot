@@ -99,6 +99,33 @@ pipeline {
             }
         }
 
+        stage('Deploy Frontend Container') {
+            steps {
+                echo 'Deploying frontend container...'
+        
+                sh '''
+                    docker stop easystore-frontend || true
+                    docker rm easystore-frontend || true
+        
+                    docker run -d \
+                        --name easystore-frontend \
+                        -p 5173:80 \
+                        easystore-frontend:${BUILD_NUMBER}
+                '''
+            }
+        }
+        stage('Verify Frontend') {
+            steps {
+                echo 'Verifying frontend container...'
+        
+                sh '''
+                    sleep 5
+                    docker ps
+                    docker logs --tail 30 easystore-frontend
+                '''
+            }
+        }
+
         stage('Build Successful') {
             steps {
                 echo '========================================='
