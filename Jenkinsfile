@@ -87,6 +87,18 @@ pipeline {
             }
         }
 
+        stage('Build Frontend Docker Image') {
+            steps {
+                echo 'Building frontend Docker image...'
+        
+                sh '''
+                    docker build \
+                        -t easystore-frontend:${BUILD_NUMBER} \
+                        ./easystore-ui
+                '''
+            }
+        }
+
         stage('Build Successful') {
             steps {
                 echo '========================================='
