@@ -32,7 +32,6 @@ import java.util.List;
 public class EazyStoreSecurityConfig {
     private final List<String> publicPaths;
     @Bean
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrfConfig -> csrfConfig
