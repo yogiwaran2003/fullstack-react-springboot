@@ -94,7 +94,7 @@ pipeline {
                 sh '''
                     docker build \
                         -t easystore-frontend:${BUILD_NUMBER} \
-                        ./easystore-ui
+                        ./eazystore-ui
                 '''
             }
         }
