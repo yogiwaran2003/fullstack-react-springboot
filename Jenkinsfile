@@ -40,6 +40,34 @@ pipeline {
                 '''
             }
         }
+        stage('Deploy Backend Container') {
+            steps {
+                echo 'Deploying backend container...'
+        
+                sh '''
+                    docker stop easystore-backend || true
+                    docker rm easystore-backend || true
+        
+                    docker run -d \
+                        --name easystore-backend \
+                        -p 8081:8080 \
+                        easystore-backend:${BUILD_NUMBER}
+                '''
+            }
+        }
+        stage('Verify Backend') {
+            steps {
+                echo 'Verifying backend container...'
+        
+                sh '''
+                    sleep 10
+        
+                    docker ps
+        
+                    docker logs --tail 50 easystore-backend
+                '''
+            }
+        }
 
         stage('Build Frontend') {
             steps {
